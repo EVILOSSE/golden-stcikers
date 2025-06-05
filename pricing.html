@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC+ - Pricing</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' (monospace) and 'Press Start 2P' (pixelated) -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Link to your custom stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase CDN Imports -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+</head>
+<body class="font-mono bg-black text-white overflow-x-hidden leading-relaxed">
+
+    <!-- Header (Original - now disappears on scroll) -->
+    <header id="main-header" class="bg-black fixed w-full top-0 z-[1000] transition-opacity-transform">
+        <div class="container max-w-6xl mx-auto px-5">
+            <div class="header-content flex justify-between items-center py-5">
+                <!-- Main header title uses font-mono -->
+               <!-- هذا هو الجزء الذي تحتاج إلى استبداله في ملف index.html الخاص بك،
+     داخل وسم <header id="main-header">، تحديداً في div الذي كان يحتوي على "MY logo". -->
+<div class="font-mono text-lg font-bold text-white tracking-wider main-header-title">
+    <img src="logo.png" alt="MC+ Logo" class="h-8 md:h-10">
+</div>
+
+                    <!-- Main header navigation links now use font-minecraft-ten and text-xs for rougher look -->
+                    <ul class="flex list-none gap-10 text-xs font-normal nav-links font-minecraft-ten tracking-tighter">
+                        <li><a href="index.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">HOME</a></li>
+                        <li><a href="pricing.html" target="_blank" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5 active-link">PRICING</a></li>
+                        <li><a href="features.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">FEATURES</a></li>
+                        <li><a href="discord.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">DISCORD SERVER</a></li>
+                        <li><a href="index.html#faq" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">FAQ</a></li>
+                    </ul>
+                </nav>
+                <div class="text-gray-400 text-xl cursor-pointer transition-colors duration-300 hover:text-white search-icon">⌕</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Header (Appears on Scroll, replaces main header) -->
+    <header id="sticky-header" class="fixed w-10/12 md:w-2/3 lg:w-1/2 xl:w-2/5 top-4 left-1/2 -translate-x-1/2 z-[990] bg-white bg-opacity-40 backdrop-blur-md rounded-full transition-opacity-transform opacity-0 -translate-y-full hidden">
+        <div class="container max-w-full mx-auto px-5"> <!-- max-w-full to allow inner content to stretch -->
+            <div class="flex justify-between items-center py-2"> <!-- Reduced padding for compact height -->
+                <nav>
+                    <!-- Sticky header navigation links now use font-press-start and smaller gap -->
+                    <ul class="flex list-none gap-2 text-xs font-normal font-press-start"> <!-- Changed font to font-press-start -->
+                        <li><a href="index.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">HOME</a></li>
+                        <li><a href="pricing.html" target="_blank" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">PRICING</a></li>
+                        <li><a href="features.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">FEATURES</a></li>
+                        <li><a href="discord.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">DISCORD</a></li>
+                        <li><a href="index.html#faq" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">FAQ</a></li>
+                    </ul>
+                </nav>
+                <!-- Big "JOIN NOW" button for sticky header -->
+                <a href="#" class="mc-button bg-black text-white border-black hover:bg-gray-800 hover:text-white text-xs px-4 py-1.5 font-bold whitespace-nowrap">JOIN NOW</a> <!-- Smaller button for compact bar -->
+                <!-- Search icon removed for cleaner dynamic island look -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Discord Banner -->
+    <div id="discord-banner" class="bg-gray-800 text-white text-center py-3 text-xs mt-20 tracking-wide font-normal font-mono">
+        Join our <a href="#" class="text-yellow-200 underline font-bold">Discord server</a> for more updates!
+    </div>
+
+    <!-- Main content for pricing page -->
+    <main class="flex-grow flex flex-col items-center justify-center p-8 pt-[100px] relative"> <!-- Added relative positioning here -->
+        <!-- Background image container, positioned absolutely at the bottom layer -->
+        <div class="absolute inset-0 z-0 pointer-events-none" style="background-image: url('ranks.png'); background-size: cover; background-position: center;"></div>
+        <!-- Semi-transparent overlay to ensure text readability, above the background image -->
+        <div class="absolute inset-0 z-[1] bg-black opacity-50 pointer-events-none"></div>
+
+        <div class="text-center relative z-10"> <!-- Ensure content is above overlay -->
+            <h1 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider text-white">
+                PRICING PLANS
+            </h1>
+            <p class="text-lg leading-relaxed mb-8 text-gray-300 max-w-2xl mx-auto">
+                Explore our flexible pricing options to find the perfect plan for your Golden Stickers experience.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                <!-- Basic Plan Card -->
+                <div class="bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
+                    <h3 class="font-minecraftia text-2xl text-orange-400 mb-4">Basic</h3>
+                    <p class="text-4xl font-bold mb-4">$9.99<span class="text-base font-normal">/month</span></p>
+                    <ul class="list-disc list-inside text-left text-gray-300 mb-6">
+                        <li>Access to basic features</li>
+                        <li>Standard support</li>
+                        <li>Limited server capacity</li>
+                    </ul>
+                    <button class="mc-button mc-button-green" onclick="openOrderModal('Basic')">GET STARTED</button>
+                </div>
+
+                <!-- Premium Plan Card -->
+                <div class="bg-gray-800 p-8 rounded-lg shadow-lg border-2 border-orange-400">
+                    <h3 class="font-minecraftia text-2xl text-orange-400 mb-4">Premium</h3>
+                    <p class="text-4xl font-bold mb-4">$19.99<span class="text-base font-normal">/month</span></p>
+                    <ul class="list-disc list-inside text-left text-gray-300 mb-6">
+                        <li>All Basic features</li>
+                        <li>Priority support</li>
+                        <li>Increased server capacity</li>
+                        <li>Exclusive in-game items</li>
+                    </ul>
+                    <button class="mc-button mc-button-green" onclick="openOrderModal('Premium')">CHOOSE PLAN</button>
+                </div>
+
+                <!-- Pro Plan Card -->
+                <div class="bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
+                    <h3 class="font-minecraftia text-2xl text-orange-400 mb-4">Pro</h3>
+                    <p class="text-4xl font-bold mb-4">$29.99<span class="text-base font-normal">/month</span></p>
+                    <ul class="list-disc list-inside text-left text-gray-300 mb-6">
+                        <li>All Premium features</li>
+                        <li>24/7 dedicated support</li>
+                        <li>Highest server capacity</li>
+                        <li>Early access to updates</li>
+                    </ul>
+                    <button class="mc-button mc-button-green" onclick="openOrderModal('Pro')">GO PRO</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Order Modal -->
+    <div id="order-modal" class="fixed inset-0 z-[1000] hidden items-center justify-center">
+        <!-- Transparent blurry overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md" onclick="closeOrderModal()"></div>
+
+        <!-- Modal content -->
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full relative z-20 border border-gray-700">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl" onclick="closeOrderModal()">
+                &times;
+            </button>
+            <h2 class="font-minecraftia text-3xl text-white mb-6 text-center">Order <span id="modal-plan-name"></span> Plan</h2>
+            <p class="text-base text-gray-300 mb-4 text-center">Please enter your Minecraft username:</p>
+            <input type="text" id="minecraft-username" placeholder="Your Minecraft Username" class="w-full p-3 mb-6 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-orange-400 font-mono">
+            <p class="text-sm text-gray-400 mb-8 text-center">After submitting, please wait for your rank to be assigned on our Discord server. Make sure you are in the server!</p>
+            <button class="mc-button mc-button-green w-full" onclick="submitOrder()">SUBMIT ORDER</button>
+            <p id="order-status-message" class="text-center text-sm mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container max-w-6xl mx-auto px-5">
+            <div class="flex justify-between items-center flex-wrap gap-8 py-16">
+                <div class="flex gap-10 text-sm flex-wrap justify-center md:justify-start">
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Terms of Service</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Support</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Contact</a>
+                </div>
+                <div class="text-xs text-gray-400 tracking-tight text-center md:text-right">
+                    2025 MC+ Golden Stickers. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Link to your custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Modal Snippet</title>
+    <!-- Tailwind CSS CDN - Ensure this is already in your main pricing.html -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' (monospace) and 'Press Start 2P' (pixelated) - Ensure these are in your main pricing.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles for the modal - Add this to your style.css or directly in <head> */
+        /* ONLY include styles here that are specific to the modal and not already in your main style.css */
+        .backdrop-blur-md {
+            backdrop-filter: blur(8px); /* Adjust blur strength as needed */
+            -webkit-backdrop-filter: blur(8px); /* For Safari support */
+        }
+        /*
+        The .mc-button and font styles below are examples.
+        They should ideally be defined ONCE in your main style.css file.
+        DO NOT copy these if they are already in your style.css.
+        */
+        /*
+        .mc-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            @apply text-sm uppercase tracking-normal;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-position: center;
+            color: #ffffff;
+            transition: transform 0.1s ease-out, filter 0.1s ease-out;
+            width: 162px;
+            height: 61px;
+        }
+        .mc-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        .mc-button-green {
+            background-image: url('join_now.png');
+        }
+        .font-minecraftia {
+            font-family: 'Minecraftia', cursive;
+        }
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
+        */
+    </style>
+</head>
+<body>
+
+    <!--
+    COPY THIS SECTION AND PASTE IT INTO YOUR pricing.html
+    Preferably just before the closing </body> tag.
+    -->
+    <!-- Order Modal -->
+    <div id="order-modal" class="fixed inset-0 z-[1000] hidden items-center justify-center">
+        <!-- Transparent blurry overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md" onclick="closeOrderModal()"></div>
+
+        <!-- Modal content -->
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full relative z-20 border border-gray-700">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl" onclick="closeOrderModal()">
+                &times;
+            </button>
+            <h2 class="font-minecraftia text-3xl text-white mb-6 text-center">Order <span id="modal-plan-name"></span> Plan</h2>
+            <p class="text-base text-gray-300 mb-4 text-center">Please enter your Minecraft username:</p>
+            <input type="text" id="minecraft-username" placeholder="Your Minecraft Username" class="w-full p-3 mb-6 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-orange-400 font-mono">
+            <p class="text-sm text-gray-400 mb-8 text-center">After submitting, please wait for your rank to be assigned on our Discord server. Make sure you are in the server!</p>
+            <button class="mc-button mc-button-green w-full" onclick="submitOrder()">SUBMIT ORDER</button>
+            <p id="order-status-message" class="text-center text-sm mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <!--
+    COPY THIS JAVASCRIPT AND PASTE IT INTO YOUR pricing.html
+    Preferably just before the closing </body> tag, and AFTER the modal HTML.
+    If you have an existing script.js, you can put this code inside it,
+    but ensure the functions are globally accessible (e.g., by attaching to window object).
+    -->
+    <script>
+        // Get modal elements
+        const orderModal = document.getElementById('order-modal');
+        const modalPlanName = document.getElementById('modal-plan-name');
+        const minecraftUsernameInput = document.getElementById('minecraft-username');
+        const orderStatusMessage = document.getElementById('order-status-message');
+
+        let currentPlan = ''; // To store the plan selected by the user
+
+        // Function to open the order modal
+        function openOrderModal(planName) {
+            currentPlan = planName;
+            if (modalPlanName) {
+                modalPlanName.textContent = planName;
+            }
+            if (minecraftUsernameInput) {
+                minecraftUsernameInput.value = ''; // Clear previous input
+            }
+            if (orderStatusMessage) {
+                orderStatusMessage.classList.add('hidden'); // Hide status message
+            }
+            if (orderModal) {
+                orderModal.classList.remove('hidden');
+                orderModal.classList.add('flex'); // Use flex to center
+            } else {
+                console.error("Order modal element not found!");
+            }
+        }
+
+        // Function to close the order modal
+        function closeOrderModal() {
+            if (orderModal) {
+                orderModal.classList.add('hidden');
+                orderModal.classList.remove('flex');
+            }
+            if (orderStatusMessage) {
+                orderStatusMessage.classList.add('hidden'); // Ensure status message is hidden on close
+            }
+        }
+
+        // Placeholder for submitOrder function - you will integrate Firebase here
+        // or ensure your main script.js handles this.
+        function submitOrder() {
+            const username = minecraftUsernameInput.value.trim();
+            if (!username) {
+                orderStatusMessage.textContent = "Please enter your Minecraft username.";
+                orderStatusMessage.classList.remove('hidden');
+                orderStatusMessage.classList.add('text-red-500');
+                return;
+            }
+            // In a real application, you would send this data to a server or Firebase
+            orderStatusMessage.textContent = `Order for ${currentPlan} by ${username} submitted! (This is a demo)`;
+            orderStatusMessage.classList.remove('hidden', 'text-red-500');
+            orderStatusMessage.classList.add('text-green-500');
+            minecraftUsernameInput.value = ''; // Clear input
+            // You might want to close the modal after a short delay or upon successful API response
+            // setTimeout(closeOrderModal, 3000);
+        }
+
+        // --- IMPORTANT ---
+        // You need to add onclick="openOrderModal('Basic')" (or 'Premium', 'Pro')
+        // to your "GET STARTED", "CHOOSE PLAN", "GO PRO" buttons in pricing.html.
+        // Example: <button class="mc-button mc-button-green" onclick="openOrderModal('Basic')">GET STARTED</button>
+    </script>
+
+</body>
+</html>

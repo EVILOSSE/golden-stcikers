@@ -1,0 +1,789 @@
+<!DOCTYPE Html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC+ - Golden Stickers server</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' (monospace) and 'Press Start 2P' (pixelated) -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Press+Start 2P&display=swap" rel="stylesheet">
+    <!-- Link to your custom stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* Specific styles for the sticky header's JOIN NOW button */
+        #sticky-header .sticky-join-button {
+            border-radius: 9999px; /* rounded-full */
+            background-color: rgba(0, 0, 0, 0.7); /* Dark transparent black */
+            backdrop-filter: blur(5px); /* Blur effect */
+            -webkit-backdrop-filter: blur(5px); /* For Safari */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle white border */
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        #sticky-header .sticky-join-button:hover {
+            background-color: rgba(0, 0, 0, 0.9); /* Slightly darker/less transparent on hover */
+            border-color: rgba(255, 255, 255, 0.5); /* Make border slightly more visible */
+            transform: translateY(-1px); /* Slight lift */
+        }
+
+        /* --- NEW STYLES FOR JOIN NOW MODAL --- */
+        /* If 'Minecraft Ten' font is already defined in style.css, you can remove this @font-face */
+        @font-face {
+            font-family: 'Minecraft Ten';
+            src: url('fonts/MinecraftTen.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        /* If 'Minecraftia' font is already defined in style.css, you can remove this @font-face */
+        @font-face {
+            font-family: 'Minecraftia';
+            src: url('fonts/Minecraftia.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+
+        #join-now-modal {
+            /* Removed transition here as GSAP will handle animations */
+            display: flex; /* Always keep flex for centering, hide with opacity/display property via JS */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+
+        #join-now-modal.hidden {
+            opacity: 0;
+            pointer-events: none; /* Allows clicks to pass through when hidden */
+            display: none; /* Hide element completely when hidden */
+        }
+
+        .modal-content-minecraft {
+            border: 2px solid #fff; /* White border for Minecraft feel */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+            width: 350px; /* Fixed width, adjust as needed */
+            max-width: 90vw; /* Responsive max width */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5); /* MORE TRANSPARENT Dark transparent background */
+            backdrop-filter: blur(8px); /* Blurry effect */
+            -webkit-backdrop-filter: blur(8px); /* For Safari */
+            padding: 1.5rem; /* Increased padding */
+
+            /* GSAP initial state - will be animated by JS */
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .close-button-minecraft {
+            width: auto; /* Adjust width dynamically */
+            height: auto; /* Adjust height dynamically */
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s ease-out, color 0.1s ease-out;
+            margin-bottom: 1rem; /* Space below button */
+            font-family: 'Minecraft Ten', monospace; /* Use Minecraft Ten font for 'X' */
+            color: #fff; /* White color for the 'X' */
+            font-size: 2.2rem; /* Make the 'X' large and prominent */
+            line-height: 1; /* Adjust line height to center 'X' vertically */
+            padding: 0 0.5rem; /* Small padding for clickable area */
+        }
+        .close-button-minecraft:hover {
+            transform: translateY(-2px);
+            color: #ff9900; /* Minecraft orange on hover */
+        }
+
+        .server-detail-minecraft {
+            display: flex;
+            flex-direction: column; /* Stack label and value vertically */
+            align-items: center;
+            justify-content: center;
+            background-image: url('dirt.png'); /* Dirt texture background */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: 2px solid #5a4a3a; /* Darker brown border for dirt texture */
+            padding: 1rem 1.5rem; /* Increased padding for better appearance */
+            border-radius: 0.25rem;
+            width: 100%; /* Full width within modal */
+            box-sizing: border-box;
+            margin-bottom: 0.75rem; /* Space between entries */
+        }
+
+        .server-detail-minecraft span {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* Text shadow for readability on texture */
+            color: #eee; /* Lighter text color */
+        }
+
+        .server-detail-minecraft span:first-child { /* IP/PORT label */
+            font-family: 'Minecraft Ten', monospace;
+            font-size: 0.9rem; /* Slightly smaller for label */
+            margin-bottom: 0.25rem; /* Space between label and value */
+            text-transform: uppercase;
+        }
+
+        .server-detail-minecraft span:last-child { /* Actual IP/Port value */
+            font-family: 'Minecraft Ten', monospace;
+            font-size: 1.1rem; /* Prominent font size for values */
+            cursor: pointer; /* Indicate clickable */
+        }
+
+        /* --- STYLES FOR EXCLUSIVE FEATURES SECTION (now with screens.png as background) --- */
+        #exclusive-features {
+            position: relative; /* Needed for absolute positioning of background/overlay */
+            overflow: hidden; /* Ensures background/overlay don't spill out */
+            min-height: 800px; /* Ensure enough height for the section with the background */
+            background-image: url('screens.png'); /* Direct background image */
+            background-size: cover;
+            background-position: center;
+            background-color: transparent; /* Ensure no underlying black background */
+        }
+
+        /* Removed background-image-container and overlay divs from HTML and their corresponding CSS */
+        /* as the background is now applied directly to the section */
+
+        /* Ensure all direct children that are content are above the background */
+        #exclusive-features > .container,
+        #exclusive-features > .overflow-hidden { /* Target the gallery container */
+            position: relative;
+            z-index: 2; /* Ensures content is above the background image */
+        }
+
+        /* --- SPLASH SCREEN STYLES --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000; /* Black background for the splash screen */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Ensure it's on top of everything */
+            overflow: hidden; /* Hide any overflow during animation */
+        }
+
+        #splash-screen img {
+            max-width: 80%; /* Adjust size as needed */
+            max-height: 80%; /* Adjust size as needed */
+            object-fit: contain; /* Ensure the image fits within the bounds without cropping */
+        }
+    </style>
+</head>
+<body class="font-mono bg-black text-white overflow-x-hidden leading-relaxed">
+
+    <!-- SPLASH SCREEN HTML -->
+    <div id="splash-screen">
+        <img src="ingo.png" alt="Loading Logo">
+    </div>
+
+    <!-- WRAP ALL MAIN CONTENT IN A DIV -->
+    <!-- Initially hidden with Tailwind classes, will be revealed by GSAP -->
+    <div id="main-content-wrapper" class="opacity-0 pointer-events-none">
+        <!-- Header (Original - now disappears on scroll) -->
+        <header id="main-header" class="bg-black fixed w-full top-0 z-[1000] transition-opacity-transform">
+            <div class="container max-w-6xl mx-auto px-5">
+                <div class="header-content flex justify-between items-center py-5">
+                    <!-- Main header title uses font-mono -->
+                    <div class="font-mono text-lg font-bold text-white tracking-wider main-header-title">
+                        <img src="logo.png" alt="MC+ Logo" class="h-8 md:h-10">
+                    </div>
+                    <nav>
+                        <!-- Main header navigation links now use font-minecraft-ten and text-xs for rougher look -->
+                        <ul class="flex list-none gap-10 text-xs font-normal nav-links font-minecraft-ten tracking-tighter">
+                            <li><a href="#hero" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5 active-link">HOME</a></li>
+                            <li><a href="pricing.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">PRICING</a></li>
+                            <li><a href="features.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">FEATURES</a></li>
+                            <li><a href="discord.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">DISCORD SERVER</a></li>
+                            <li><a href="#faq" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">FAQ</a></li>
+                        </ul>
+                    </nav>
+                    <div class="text-gray-400 text-xl cursor-pointer transition-colors duration-300 hover:text-white search-icon">⌕</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sticky Header (Appears on Scroll, replaces main header) -->
+        <header id="sticky-header" class="fixed w-10/12 md:w-2/3 lg:w-1/2 xl:w-2/5 top-4 left-1/2 -translate-x-1/2 z-[990] bg-white bg-opacity-40 backdrop-blur-md rounded-full transition-opacity-transform opacity-0 -translate-y-full hidden">
+            <div class="container max-w-full mx-auto px-5"> <!-- max-w-full to allow inner content to stretch -->
+                <div class="flex justify-between items-center py-2"> <!-- Reduced padding for compact height -->
+                    <nav>
+                        <!-- Sticky header navigation links now use font-press-start and smaller gap -->
+                        <ul class="flex list-none gap-2 text-xs font-normal font-press-start"> <!-- Changed font to font-press-start -->
+                            <li><a href="#hero" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">HOME</a></li>
+                            <li><a href="pricing.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">PRICING</a></li>
+                            <li><a href="features.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">FEATURES</a></li>
+                            <li><a href="discord.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">DISCORD</a></li>
+                            <li><a href="#faq" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">FAQ</a></li>
+                        </ul>
+                    </nav>
+                    <!-- Big "JOIN NOW" button for sticky header -->
+                    <a href="#" id="stickyJoinNowButton" class="mc-button sticky-join-button text-white text-xs px-4 py-1.5 font-bold whitespace-nowrap">JOIN NOW</a> <!-- Added id="stickyJoinNowButton" and sticky-join-button class -->
+                    <!-- Search icon removed for cleaner dynamic island look -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Discord Banner -->
+        <div id="discord-banner" class="bg-gray-800 text-white text-center py-3 text-xs mt-20 tracking-wide font-normal font-mono">
+            Join our <a href="#" class="text-yellow-200 underline font-bold">Discord server</a> for more updates!
+        </div>
+
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center bg-black relative py-20">
+            <!-- Background image container, positioned absolutely at the bottom layer -->
+            <div class="absolute inset-0 z-0 pointer-events-none" style="background-image: url('background.png'); background-size: cover; background-position: center;"></div>
+            <!-- Semi-transparent overlay to ensure text readability, above the background image -->
+            <div class="absolute inset-0 z-[1] bg-black opacity-50 pointer-events: none;"></div>
+
+            <div class="container max-w-6xl mx-auto px-5 relative z-10"> <!-- Ensure content is above overlay -->
+                <div class="max-w-3xl text-center md:text-left">
+                    <!-- Elements for GSAP animation -->
+                    <h1 class="font-minecraftia text-hero-clamp leading-tight mb-10 text-white tracking-wide hero-element">
+                        MEET <span class="text-orange-400">GOLDEN STICKERS</span> THE<br>
+                        BEST server IN<br>
+                        MINECRAFT!
+                    </h1>
+                    <p class="text-base leading-relaxed mb-12 text-gray-300 max-w-2xl font-normal mx-auto md:mx-0 hero-element">
+                        Golden Stickers is the ultimate Minecraft server, delivering unparalleled performance, breathtaking visuals, and a vibrant community. Experience a redefined Minecraft adventure with custom features and endless possibilities.
+                    </p>
+                    <div class="flex gap-5 flex-wrap justify-center md:justify-start hero-element">
+                        <!-- Updated "JOIN NOW" button with green texture -->
+                        <a href="#" id="heroJoinNowButton" class="mc-button mc-button-green">JOIN NOW</a> <!-- Added id="heroJoinNowButton" -->
+                        <!-- Updated "WATCH PREVIEW" button with gray texture -->
+                        <a href="https://www.youtube.com/@waelplayer-y/videos" target="_blank" class="mc-button mc-button-gray">WATCH PREVIEW</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RELEASING LATER THIS YEAR Section -->
+        <section id="releasing-soon" class="py-24 bg-black text-white overflow-hidden">
+            <div class="container max-w-6xl mx-auto px-5 flex flex-col md:flex-row items-center justify-between gap-10">
+                <div class="text-center md:text-left md:w-1/2">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        RELEASING<br>LATER THIS<br>YEAR
+                    </h2>
+                    <p class="text-base leading-relaxed font-normal">
+                        Golden Stickers: For Java Edition releases this year.
+                    </p>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img id="releasing-image" src="image_4f778e.png" alt="Minecraft game interface on laptop and tablet" class="max-w-full h-auto rounded-lg">
+                </div>
+            </div>
+        </section>
+
+        <!-- WANT TO CONTRIBUTE IN THIS PROJECT? Section -->
+        <section id="contribute" class="py-24 bg-black text-white overflow-hidden">
+            <div class="container max-w-6xl mx-auto px-5 flex flex-col-reverse md:flex-row items-center justify-between gap-10">
+                <div class="md:w-1/2 flex justify-center">
+                    <img id="contribute-image" src="image_4f774e.png" alt="Minecraft blocks and textures" class="max-w-full h-auto rounded-lg">
+                </div>
+                <div class="text-center md:text-left md:w-1/2">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        WANT TO<br>CONTRIBUTE IN<br>THIS PROJECT?
+                    </h2>
+                    <p class="text-base leading-relaxed font-normal mb-8">
+                        We appreciate your contributions, whether it's bug reports, suggestions, feedback, or
+                        other insightful ideas that can aid us in crafting a fast and enjoyable product for
+                        everyone.
+                    </p>
+                    <a href="#" class="mc-button mc-button-gray">Send feedback to the devs.</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXCLUSIVE FEATURES NEVER SEEN BEFORE IN MINECRAFT Section (Continuous Gallery Layout) -->
+        <section id="exclusive-features" class="py-24 bg-black text-white">
+            <!-- Background image and overlay for this section -->
+            <div class="background-image-container"></div>
+            <div class="overlay"></div>
+
+            <!-- Main content of the section (text and gallery) -->
+            <div class="container max-w-6xl mx-auto px-5 relative z-20">
+                <h2 class="font-minecraftia text-3xl text-white mb-6 text-center tracking-wider">EXCLUSIVE FEATURES NEVER SEEN BEFORE<br>IN MINECRAFT.</h2>
+                <p class="text-base leading-relaxed font-normal mb-12 text-center max-w-3xl mx-auto">
+                    By integrating detailed ambient sounds that respond to your environment, enhancing weather effects with realistic conditions, and
+                    including special effects like butterflies and fireflies, Golden Stickers revolutionizes the traditional server experience.
+                </p>
+            </div>
+
+            <!-- Gallery Track Container - ensures it's above the image and overlay -->
+            <div class="overflow-hidden relative h-[500px] w-full py-4 z-20">
+                <div id="gallery-track" class="flex flex-nowrap absolute top-0 left-0 h-full items-center gap-8 px-8">
+                    <!-- Each gallery-item will be duplicated in JS for seamless looping -->
+                    <!-- Item 1: Single image (screenshot1) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot1.png" alt="Minecraft Screenshot 1" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot1.png')">
+                    </div>
+
+                    <!-- Item 2: Two stacked images (screenshot3 over screenshot2) -->
+                    <div class="flex flex-col gap-4 justify-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot3.png" alt="Minecraft Screenshot 3" class="w-full h-1/2 rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot3.png')">
+                        <img src="screenshot2.png" alt="Minecraft Screenshot 2" class="w-full h-1/2 rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot2.png')">
+                    </div>
+
+                    <!-- Item 3: Single image (screenshot4) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot4.png" alt="Minecraft Screenshot 4" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot4.png')">
+                    </div>
+
+                    <!-- Item 4: Single image (screenshot5) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot5.png" alt="Minecraft Screenshot 5" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot5.png')">
+                    </div>
+
+                    <!-- Item 5: Two stacked images (screenshot6 over screenshot7) -->
+                    <div class="flex flex-col gap-4 justify-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot6.png" alt="Minecraft Screenshot 6" class="w-full h-1/2 rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot6.png')">
+                        <img src="screenshot7.png" alt="Minecraft Screenshot 7" class="w-full h-1/2 rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot7.png')">
+                    </div>
+
+                    <!-- Item 6: Single image (screenshot8) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot8.png" alt="Minecraft Screenshot 8" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot8.png')">
+                    </div>
+
+                    <!-- Item 7: Single image (screenshot9) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot9.png" alt="Minecraft Screenshot 9" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot9.png')">
+                    </div>
+
+                    <!-- Item 8: Single image (screenshot10) -->
+                    <div class="flex flex-col justify-center items-center gallery-item flex-shrink-0 w-[300px] md:w-[400px] lg:w-[450px]">
+                        <img src="screenshot10.png" alt="Minecraft Screenshot 10" class="w-full h-full rounded-lg cursor-pointer object-cover transform transition duration-300 hover:scale-105" onclick="openLightbox('screenshot10.png')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="container max-w-6xl mx-auto px-5 relative z-20"> <!-- Container for button -->
+                <div class="text-center mt-12">
+                    <a href="#" class="mc-button mc-button-green" onclick="showAllScreenshots()">VIEW ALL SCREENSHOTS</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOIN OUR DISCORD SERVER Section (Corrected font and placement) -->
+        <section id="join-discord-server" class="py-24 bg-yellow-400 text-black">
+            <div class="container max-w-6xl mx-auto px-5 text-center">
+                <h2 class="font-minecraft-ten text-5xl leading-tight mb-6 tracking-wider">
+                    JOIN OUR DISCORD SERVER
+                </h2>
+                <p class="text-base leading-relaxed font-mono mb-8">
+                    Chat with other players, submit feedback, report bugs, and more!<br>
+                    Join 4,284 other members today.
+                </p>
+                <div class="flex justify-center mb-10">
+                    <img src="image_4511a9.png" alt="صورة شاشة واجهة ديسكورد" class="max-w-full h-auto rounded-lg shadow-lg">
+                </div>
+                <a href="#" class="mc-button mc-button-yellow">Open Discord</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container max-w-6xl mx-auto px-5">
+                <div class="flex justify-between items-center flex-wrap gap-8 py-16">
+                    <div class="flex gap-10 text-sm flex-wrap justify-center md:justify-start">
+                        <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Terms of Service</a>
+                        <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Support</a>
+                        <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Contact</a>
+                    </div>
+                    <div class="text-xs text-gray-400 tracking-tight text-center md:text-right">
+                        2025 MC+ Golden Stickers. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Lightbox Modal -->
+        <div id="lightbox-modal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black bg-opacity-90">
+            <button class="absolute top-4 right-4 text-white text-4xl leading-none" onclick="closeLightbox()">&times;</button>
+            <img id="lightbox-image" src="" alt="صورة شاشة بالحجم الكامل" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg">
+        </div>
+
+        <!-- Join Now Modal -->
+        <div id="join-now-modal" class="fixed inset-0 z-[2000] hidden">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-md" onclick="closeJoinNowModal()"></div>
+
+            <!-- Modal Content -->
+            <div class="modal-content-minecraft p-6 rounded-lg shadow-xl relative z-20">
+                <!-- Close Button -->
+                <button id="closeJoinNowModalButton" class="close-button-minecraft absolute top-2 right-2">&times;</button>
+
+                <h2 class="font-minecraftia text-2xl text-white mb-6 text-center tracking-wider">JOIN OUR SERVER</h2>
+
+                <div class="flex flex-col gap-4 w-full">
+                    <div class="server-detail-minecraft">
+                        <span class="font-minecraft-ten text-sm text-gray-200">IP:</span>
+                        <span id="server-ip" class="font-minecraft-ten text-lg text-white">play.goldstickers.com</span>
+                    </div>
+                    <div class="server-detail-minecraft">
+                        <span class="font-minecraft-ten text-sm text-gray-200">PORT:</span>
+                        <span id="server-port" class="font-minecraft-ten text-lg text-white">25565</span>
+                    </div>
+                </div>
+
+                <p class="font-mono text-xs text-gray-400 mt-6 text-center">Click IP or Port to copy.</p>
+            </div>
+        </div>
+    </div> <!-- END main-content-wrapper -->
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splash-screen');
+            const splashImage = splashScreen.querySelector('img');
+            const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+            // Set initial state for main content: hidden
+            gsap.set(mainContentWrapper, { opacity: 0, pointerEvents: 'none' });
+            // Prevent scrolling on body while splash screen is active
+            document.body.style.overflowY = 'hidden';
+
+            // --- SPLASH SCREEN LOGIC ---
+            // Create a GSAP timeline for the splash screen animation
+            const splashTimeline = gsap.timeline();
+
+            splashTimeline
+                .to(splashImage, {
+                    delay: 3, // Display ingo.png for 3 seconds
+                    scale: 1.5, // Animate ingo.png "going in"
+                    opacity: 0, // Fade out ingo.png
+                    duration: 1.5, // Animation duration
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        // Once ingo.png animation is complete, hide splash screen div
+                        gsap.set(splashScreen, { display: 'none' });
+
+                        // Animate main content in
+                        gsap.to(mainContentWrapper, {
+                            opacity: 1,
+                            pointerEvents: 'auto',
+                            duration: 1,
+                            ease: "power2.out",
+                            onComplete: () => {
+                                document.body.style.overflowY = 'auto'; // Re-enable scrolling
+                            }
+                        });
+                    }
+                });
+
+            // --- EXISTING JAVASCRIPT LOGIC (moved inside DOMContentLoaded) ---
+
+            // Lightbox Functions (existing)
+            function openLightbox(imageSrc) {
+                const lightboxModal = document.getElementById('lightbox-modal');
+                const lightboxImage = document.getElementById('lightbox-image');
+                lightboxImage.src = imageSrc;
+                lightboxModal.classList.remove('hidden');
+                lightboxModal.classList.add('flex'); // Use flex to center content
+            }
+
+            function closeLightbox() {
+                const lightboxModal = document.getElementById('lightbox-modal');
+                lightboxModal.classList.add('hidden');
+                lightboxModal.classList.remove('flex');
+            }
+
+            // Placeholder for "Show All Screenshots" button - currently just closes the lightbox (existing)
+            function showAllScreenshots() {
+                alert("This button would typically show a full gallery or load more images.");
+            }
+
+            // --- NEW JOIN NOW MODAL JAVASCRIPT ---
+            const joinNowModal = document.getElementById('join-now-modal');
+            const modalContent = document.querySelector('.modal-content-minecraft'); // Get the content element
+            const closeJoinNowModalButton = document.getElementById('closeJoinNowModalButton');
+            const serverIpElement = document.getElementById('server-ip');
+            const serverPortElement = document.getElementById('server-port');
+
+            // Function to open the modal with animation
+            function openJoinNowModal() {
+                if (joinNowModal && modalContent) {
+                    joinNowModal.classList.remove('hidden'); // Make the container visible
+                    joinNowModal.style.display = 'flex'; // Ensure display is flex for centering
+
+                    // Animate the modal content in
+                    gsap.fromTo(modalContent,
+                        { opacity: 0, scale: 0.8 }, // Start state
+                        { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" } // End state
+                    );
+                }
+            }
+
+            // Function to close the modal with animation
+            function closeJoinNowModal() {
+                if (joinNowModal && modalContent) {
+                    // Animate the modal content out
+                    gsap.to(modalContent,
+                        { opacity: 0, scale: 0.8, duration: 0.3, ease: "power2.in",
+                            onComplete: () => {
+                                // After animation, hide the container completely
+                                joinNowModal.classList.add('hidden');
+                                joinNowModal.style.display = 'none';
+                            }
+                        }
+                    );
+                }
+            }
+
+            // Function to copy text to clipboard (cross-browser compatible)
+            function copyToClipboard(text) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    console.log('Text copied to clipboard:', text);
+                    // You can add a temporary visual feedback here instead of alert
+                    // e.g., a small "Copied!" message that fades out.
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    // Fallback for failed copy
+                }
+                document.body.removeChild(textArea);
+            }
+
+            // Event Listener for hero section's "JOIN NOW" button
+            const heroJoinNowButton = document.getElementById('heroJoinNowButton');
+            if (heroJoinNowButton) {
+                heroJoinNowButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default link behavior
+                    openJoinNowModal();
+                });
+            }
+
+            // Event Listener for sticky header's "JOIN NOW" button
+            const stickyJoinNowButton = document.getElementById('stickyJoinNowButton');
+            if (stickyJoinNowButton) {
+                stickyJoinNowButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default link behavior
+                    openJoinNowModal();
+                });
+            }
+
+            // Event Listener for close button
+            if (closeJoinNowModalButton) {
+                closeJoinNowModalButton.addEventListener('click', closeJoinNowModal);
+            }
+
+            // Event Listener to close modal when clicking outside content (on the overlay)
+            if (joinNowModal) {
+                joinNowModal.addEventListener('click', function(event) {
+                    // Check if the click was directly on the modal overlay (not inside the content)
+                    if (event.target === joinNowModal) {
+                        closeJoinNowModal();
+                    }
+                });
+            }
+
+            // Event Listeners for copying IP and Port
+            if (serverIpElement) {
+                serverIpElement.addEventListener('click', function() {
+                    copyToClipboard(serverIpElement.textContent);
+                });
+            }
+            if (serverPortElement) {
+                serverPortElement.addEventListener('click', function() {
+                    copyToClipboard(serverPortElement.textContent);
+                });
+            }
+
+            // Initialize modal to be hidden and display:none
+            if (joinNowModal.classList.contains('hidden')) {
+                joinNowModal.style.display = 'none';
+            }
+
+            // --- Existing header and scroll logic ---
+            const mainHeader = document.getElementById('main-header');
+            const stickyHeader = document.getElementById('sticky-header');
+            const discordBanner = document.getElementById('discord-banner');
+
+            // Function to update active link in navigation
+            function updateActiveLink() {
+                const sections = document.querySelectorAll('section');
+                const mainNavLinks = mainHeader.querySelectorAll('nav ul li a');
+                const stickyNavLinks = stickyHeader.querySelectorAll('nav ul li a');
+                let currentActiveSection = '';
+
+                // Determine which section is currently in view
+                sections.forEach(section => {
+                    // Calculate offset for the active header (main or sticky)
+                    let headerOffset = 0;
+                    if (!mainHeader.classList.contains('hidden')) { // If main header is visible
+                        headerOffset = mainHeader.offsetHeight;
+                    } else if (!stickyHeader.classList.contains('hidden')) { // If sticky header is visible
+                        // Adjust for the sticky header's top offset (top-4 = 16px)
+                        headerOffset = stickyHeader.offsetHeight + 16;
+                    }
+                    const sectionTop = section.offsetTop - headerOffset - 50; // Adjust offset for header height
+                    const sectionBottom = sectionTop + section.offsetHeight;
+
+                    if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
+                        currentActiveSection = section.id;
+                    }
+                });
+
+                // Update active class on main header navigation links
+                mainNavLinks.forEach(link => {
+                    link.classList.remove('active-link', 'border-white', 'text-white');
+                    link.classList.add('border-transparent', 'text-gray-400');
+                    if (link.getAttribute('href').substring(1) === currentActiveSection) {
+                        link.classList.add('active-link', 'border-white', 'text-white');
+                        link.classList.remove('border-transparent', 'text-gray-400');
+                    }
+                });
+
+                // Update active class on sticky header navigation links
+                stickyNavLinks.forEach(link => {
+                    link.classList.remove('active-link', 'border-black', 'text-black'); // Changed from white to black
+                    link.classList.add('border-transparent', 'text-gray-800'); // Sticky links default to gray-800
+                    if (link.getAttribute('href').substring(1) === currentActiveSection) {
+                        link.classList.add('active-link', 'border-black', 'text-black'); // Changed from white to black
+                        link.classList.remove('border-transparent', 'text-gray-800');
+                    }
+                });
+            }
+
+            // Smooth scrolling for all internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        // Calculate offset for fixed main header and potentially sticky header
+                        let headerOffset = 0;
+                        if (!mainHeader.classList.contains('hidden')) {
+                            headerOffset = mainHeader.offsetHeight;
+                        } else if (!stickyHeader.classList.contains('hidden')) {
+                            // Adjust for the sticky header's top offset (top-4 = 16px)
+                            headerOffset = stickyHeader.offsetHeight + 16;
+                        }
+                        const offsetTop = targetElement.offsetTop - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+
+                        // Update active link immediately on click
+                        updateActiveLink();
+                    }
+                });
+            });
+
+            // Button hover effects (translateY)
+            document.querySelectorAll('.mc-button').forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Feature cards scroll animation (Intersection Observer)
+            const featureObserverOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const featureObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 0.6s ease forwards';
+                    }
+                });
+            }, featureObserverOptions);
+
+            document.querySelectorAll('.feature-card').forEach(card => {
+                featureObserver.observe(card);
+            });
+
+            // Sticky header logic
+            let mainHeaderHeight = 0;
+            let discordBannerHeight = 0;
+
+            // Function to update header heights and banner height on resize
+            function updateLayoutHeights() {
+                mainHeaderHeight = mainHeader.offsetHeight;
+                discordBannerHeight = discordBanner.offsetHeight;
+                // Sticky header's top position is now fixed with Tailwind (top-4)
+                // No need to set style.top dynamically here unless it and the other elements change
+            }
+
+            window.addEventListener('resize', updateLayoutHeights); // Update heights on window resize
+
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+
+                // The scroll threshold is the height of the main header + discord banner
+                const scrollThreshold = mainHeaderHeight + discordBannerHeight;
+
+                if (currentScrollY > scrollThreshold) {
+                    // User has scrolled past the initial content, show sticky header and hide main header
+                    if (mainHeader.classList.contains('opacity-100') || !mainHeader.classList.contains('hidden')) {
+                        mainHeader.classList.remove('opacity-100', 'translate-y-0');
+                        mainHeader.classList.add('opacity-0', '-translate-y-full');
+                        // Use a timeout to add 'hidden' after the transition completes
+                        setTimeout(() => { mainHeader.classList.add('hidden'); }, 300);
+                    }
+
+                    if (stickyHeader.classList.contains('hidden') || stickyHeader.classList.contains('opacity-0')) {
+                        stickyHeader.classList.remove('hidden');
+                        // Small delay to ensure 'hidden' is removed before transition starts
+                        setTimeout(() => {
+                            stickyHeader.classList.remove('opacity-0', '-translate-y-full');
+                            stickyHeader.classList.add('opacity-100', 'translate-y-0');
+                        }, 10);
+                    }
+                } else {
+                    // User is at the top, show main header and hide sticky header
+                    if (stickyHeader.classList.contains('opacity-100') || !stickyHeader.classList.contains('hidden')) {
+                        stickyHeader.classList.remove('opacity-100', 'translate-y-0');
+                        stickyHeader.classList.add('opacity-0', '-translate-y-full');
+                        // Use a timeout to add 'hidden' after the transition completes
+                        setTimeout(() => { stickyHeader.classList.add('hidden'); }, 300);
+                    }
+
+                    if (mainHeader.classList.contains('hidden') || mainHeader.classList.contains('opacity-0')) {
+                        mainHeader.classList.remove('hidden');
+                        // Small delay to ensure 'hidden' is removed before transition starts
+                        setTimeout(() => {
+                            mainHeader.classList.remove('opacity-0', '-translate-y-full');
+                            mainHeader.classList.add('opacity-100', 'translate-y-0');
+                        }, 10);
+                    }
+                }
+                updateActiveLink(); // Always update active links for both headers
+            });
+
+            // Initial call to set active link and hide sticky header if not scrolled
+            updateLayoutHeights(); // Get initial heights and set sticky header top
+            updateActiveLink();
+            // Ensure sticky header is hidden initially
+            stickyHeader.classList.add('hidden', 'opacity-0', '-translate-y-full');
+            // Ensure main header is visible initially - this is handled by the splash screen now
+            // mainHeader.classList.remove('hidden', 'opacity-0', '-translate-y-full');
+            // mainHeader.classList.add('opacity-100', 'translate-y-0');
+        });
+        // --- END EXISTING JAVASCRIPT ---
+    </script>
+</body>
+</html>

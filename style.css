@@ -1,0 +1,150 @@
+/* Define the local 'Minecraftia' font */
+@font-face {
+    font-family: 'Minecraftia';
+    src: url('fonts/Minecraftia.ttf') format('truetype'); /* Adjust format if using .woff2 or .otf */
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Ensures text is visible during font loading */
+}
+
+/* Define the local 'Minecraft Ten' font */
+@font-face {
+    font-family: 'Minecraft Ten';
+    src: url('fonts/MinecraftTen.ttf') format('truetype'); /* Adjust format if using .woff2 or .otf */
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Ensures text is visible during font loading */
+}
+
+/* Custom font families for Tailwind */
+.font-minecraftia {
+    font-family: 'Minecraftia', cursive; /* Fallback to cursive if Minecraftia fails */
+}
+.font-minecraft-ten {
+    font-family: 'Minecraft Ten', monospace; /* Fallback to monospace if Minecraft Ten fails */
+}
+.font-mono {
+    font-family: 'Space Mono', monospace;
+}
+.font-press-start {
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Responsive font size for hero title using clamp-like behavior with Tailwind responsive classes */
+/* Adjusted for smaller size */
+.text-hero-clamp {
+    font-size: clamp(2rem, 5vw, 4rem); /* Adjusted from 2.5rem, 6vw, 5rem */
+}
+
+/* Ensure smooth transitions for elements that will be toggled */
+.transition-opacity-transform {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Specific styling for active links in main header */
+#main-header .active-link {
+    border-color: #ffffff; /* White border for active link */
+    color: #ffffff;       /* White text for active link */
+}
+
+/* Specific styling for active links in sticky header */
+#sticky-header .active-link {
+    border-color: #000000; /* Black border for active link on white background */
+    color: #000000;       /* Black text for active link on white background */
+}
+
+/* Keyframes for fade-in-up animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeIn 0.8s ease forwards;
+    opacity: 0; /* Ensure elements are hidden before animation starts */
+}
+
+/* Adjustments for smaller screens for the main header title and layout */
+@media (max-width: 768px) {
+    #main-header .main-header-title {
+        font-size: 1rem; /* Smaller font size for the long title on mobile */
+        text-align: center;
+        line-height: 1.2;
+    }
+    #main-header .header-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #main-header nav {
+        width: 100%;
+    }
+    #main-header .nav-links {
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    #main-header .search-icon {
+        display: none; /* Hide search icon on small screens for main header */
+    }
+    /* The sticky header's search icon is removed in HTML, so no need for this rule */
+}
+
+/* Custom button styles to mimic Minecraft health bar texture */
+.mc-button {
+    /* Ensure it's a flex container for centering */
+    display: flex;
+    /* Center content horizontally and vertically */
+    align-items: center;
+    justify-content: center;
+    /* Apply Arial Bold font */
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    @apply text-sm uppercase tracking-normal;
+    background-repeat: no-repeat;
+    background-size: 100% 100%; /* Ensure image covers the button exactly */
+    color: #ffffff; /* Default text color for buttons */
+    /* Common hover effect */
+    transition: transform 0.1s ease-out, filter 0.1s ease-out;
+    /* Add a small padding to give text some breathing room, if needed */
+    padding: 0 10px; /* Adjust as necessary */
+}
+
+.mc-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1); /* Slightly brighten the image on hover */
+}
+
+/* Green button style (JOIN NOW) */
+.mc-button-green {
+    background-image: url('join_now.png'); /* Use the specific image */
+    width: 162px; /* Increased from 141px */
+    height: 61px; /* Increased from 53px */
+}
+
+/* Gray button style (WATCH PREVIEW) */
+.mc-button-gray {
+    background-image: url('watch_preview.png'); /* Use the specific image */
+    width: 244px; /* Increased from 212px */
+    height: 61px; /* Increased from 53px */
+}
+
+/* Discord Banner Font and Layout */
+#discord-banner {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    /* The rest of the styling is already applied in HTML for the banner */
+}
+
+/* Main header navigation links (font size and tracking) */
+#main-header .nav-links {
+    font-size: 0.875rem; /* text-sm, equivalent to 14px */
+    letter-spacing: 0.15em; /* Increased letter-spacing for a longer, more spread out appearance */
+    font-weight: 900; /* Made the font extra bold/harsh */
+    line-height: 1; /* Made the font shorter vertically */
+}

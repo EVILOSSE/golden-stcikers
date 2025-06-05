@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC+ Search Results</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' (monospace) -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define the local 'Minecraftia' font */
+        @font-face {
+            font-family: 'Minecraftia';
+            src: url('fonts/Minecraftia.ttf') format('truetype'); /* Adjust path if your font is elsewhere */
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        .font-minecraftia {
+            font-family: 'Minecraftia', cursive;
+        }
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* Light text */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        .search-results-container {
+            background-color: #333;
+            border: 2px solid #fff;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        .result-query {
+            font-family: 'Minecraftia', cursive;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            color: #ff9900; /* Minecraft orange */
+            margin-bottom: 1rem;
+        }
+        .result-text {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.6;
+        }
+        .back-button {
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.3rem;
+            background-image: url('data:image/png;base64,iVBOR0KGgoAAAANSUhEUgAAAkwAAAA7AQMAAADP2+S7AAAABlBMVEX///8AAABVwtN+AAAAAXRSTlMAQObYZgAAAFRJREFUeNpjYBgFo2AUjIJRMBpFAwMTjExgYGBiYiYGRgYgH2BgYGNgZGJkZgZ2BiYGAgYGGgZGBoYGZmZmBh8GBgZmRmYG+BhoGBgYGBhQMQwAw4A/1m2P78AAAAASUVORK5CYII=');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease-out, filter 0.1s ease-out;
+            border: 2px solid #555;
+            box-shadow: 0 4px 0px #333;
+            font-family: 'Minecraftia', cursive;
+            font-size: 1rem;
+            text-transform: uppercase;
+            text-decoration: none; /* Remove underline for links */
+            display: inline-block; /* Make it behave like a button */
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+            box-shadow: 0 6px 0px #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-results-container">
+        <h1 class="result-query">SEARCH RESULTS FOR: "<span id="displayQuery"></span>"</h1>
+        <p id="resultContent" class="result-text">
+            No specific content found for this query in our simulated search. In a real application, this would fetch results from a database or indexed content.
+        </p>
+        <a href="index.html" class="back-button">Back to Home</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('query');
+            const displayQueryElement = document.getElementById('displayQuery');
+            const resultContentElement = document.getElementById('resultContent');
+
+            if (query) {
+                displayQueryElement.textContent = query;
+                // Simulate content based on the query, similar to the search bar's internal logic
+                let simulatedResult = '';
+                switch(query.toLowerCase()) {
+                    case 'features':
+                        simulatedResult = 'Our exclusive features include Ambient Sounds, Enhanced Weather, Dynamic Special Effects, Optimized Performance, and Community Integration. Visit our Features page for more details!';
+                        break;
+                    case 'pricing':
+                        simulatedResult = 'We offer various pricing plans tailored to your needs: Basic, Premium, and Pro. Find out more on our Pricing page!';
+                        break;
+                    case 'discord':
+                        simulatedResult = 'Join our vibrant community on Discord! Connect with other players, get support, and stay updated. Click "Open Discord" on our Discord Server page.';
+                        break;
+                    case 'golden stickers':
+                        simulatedResult = 'Golden Stickers is the ultimate Minecraft server, offering unparalleled performance, breathtaking visuals, and a thriving community. Welcome!';
+                        break;
+                    case 'recrafted':
+                        simulatedResult = 'Recrafted is our premium resource pack with HD textures and custom models, elevating Minecraft visuals to a new level.';
+                        break;
+                    default:
+                        simulatedResult = `We couldn't find specific content for "${query}". Please try a different search term or explore our site.`;
+                }
+                resultContentElement.textContent = simulatedResult;
+            } else {
+                displayQueryElement.textContent = 'No Query';
+                resultContentElement.textContent = 'Please enter a search term to find results.';
+            }
+        });
+    </script>
+</body>
+</html>

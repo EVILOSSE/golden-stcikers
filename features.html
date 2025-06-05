@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC+ - Features</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' (monospace) and 'Press Start 2P' (pixelated) -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Link to your custom stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        /* Common styles for feature backgrounds */
+        .feature-background {
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .feature-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="font-mono bg-black text-white overflow-x-hidden leading-relaxed">
+
+    <!-- Header (Original - now disappears on scroll) -->
+    <header id="main-header" class="bg-black fixed w-full top-0 z-[1000] transition-opacity-transform">
+        <div class="container max-w-6xl mx-auto px-5">
+            <div class="header-content flex justify-between items-center py-5">
+                <!-- Main header title uses font-mono -->
+               <!-- هذا هو الجزء الذي تحتاج إلى استبداله في ملف index.html الخاص بك،
+     داخل وسم <header id="main-header">، تحديداً في div الذي كان يحتوي على "MY logo". -->
+<div class="font-mono text-lg font-bold text-white tracking-wider main-header-title">
+    <img src="logo.png" alt="MC+ Logo" class="h-8 md:h-10">
+</div>
+
+                    <!-- Main header navigation links now use font-minecraft-ten and text-xs for rougher look -->
+                    <ul class="flex list-none gap-10 text-xs font-normal nav-links font-minecraft-ten tracking-tighter">
+                        <li><a href="index.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">HOME</a></li>
+                        <li><a href="pricing.html" target="_blank" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">PRICING</a></li>
+                        <li><a href="features.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5 active-link">FEATURES</a></li>
+                        <li><a href="discord.html" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">DISCORD SERVER</a></li>
+                        <li><a href="index.html#faq" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-white border-b-2 border-transparent pb-0.5">FAQ</a></li>
+                    </ul>
+                </nav>
+                <div class="text-gray-400 text-xl cursor-pointer transition-colors duration-300 hover:text-white search-icon">⌕</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Header (Appears on Scroll, replaces main header) -->
+    <header id="sticky-header" class="fixed w-10/12 md:w-2/3 lg:w-1/2 xl:w-2/5 top-4 left-1/2 -translate-x-1/2 z-[990] bg-white bg-opacity-40 backdrop-blur-md rounded-full transition-opacity-transform opacity-0 -translate-y-full hidden">
+        <div class="container max-w-full mx-auto px-5"> <!-- max-w-full to allow inner content to stretch -->
+            <div class="flex justify-between items-center py-2"> <!-- Reduced padding for compact height -->
+                <nav>
+                    <!-- Sticky header navigation links now use font-press-start and smaller gap -->
+                    <ul class="flex list-none gap-2 text-xs font-normal font-press-start"> <!-- Changed font to font-press-start -->
+                        <li><a href="index.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">HOME</a></li>
+                        <li><a href="pricing.html" target="_blank" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">PRICING</a></li>
+                        <li><a href="features.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5 active-link">FEATURES</a></li>
+                        <li><a href="discord.html" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">DISCORD</a></li>
+                        <li><a href="index.html#faq" class="text-gray-800 no-underline transition-colors duration-300 uppercase tracking-wider hover:text-black border-b-2 border-transparent py-0.5">FAQ</a></li>
+                    </ul>
+                </nav>
+                <!-- Big "JOIN NOW" button for sticky header -->
+                <a href="#" class="mc-button bg-black text-white border-black hover:bg-gray-800 hover:text-white text-xs px-4 py-1.5 font-bold whitespace-nowrap">JOIN NOW</a> <!-- Smaller button for compact bar -->
+                <!-- Search icon removed for cleaner dynamic island look -->
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-[100px]">
+
+        <!-- Hero Section for Features (now with feature.png as background) -->
+        <section id="features-hero" class="min-h-[50vh] flex items-center bg-black relative py-20 text-center overflow-hidden">
+            <div class="feature-background" style="background-image: url('feature.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10">
+                <h1 class="font-minecraftia text-hero-clamp leading-tight mb-6 text-white tracking-wide">
+                    OUR EXCLUSIVE FEATURES
+                </h1>
+                <p class="text-lg leading-relaxed text-gray-300 max-w-2xl mx-auto">
+                    Discover what makes Golden Stickers the ultimate Minecraft experience.
+                </p>
+            </div>
+        </section>
+
+        <!-- Feature One Section -->
+        <section id="feature-one" class="py-24 relative bg-black text-white flex items-center min-h-[70vh] overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2">
+            <div class="feature-background" style="background-image: url('feature1.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10 text-center md:text-left">
+                <div class="max-w-2xl">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        AMBIENT SOUNDS
+                    </h2>
+                    <p class="text-lg leading-relaxed font-normal mb-8">
+                        Experience Minecraft like never before with dynamic ambient sounds that adapt to your environment, bringing biomes to life.
+                    </p>
+                    <a href="#" class="mc-button mc-button-green">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Two Section -->
+        <section id="feature-two" class="py-24 relative bg-black text-white flex items-center min-h-[70vh] overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2">
+            <div class="feature-background" style="background-image: url('feature2.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10 text-center md:text-right">
+                <div class="max-w-2xl ml-auto">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        ENHANCED WEATHER
+                    </h2>
+                    <p class="text-lg leading-relaxed font-normal mb-8">
+                        Realistic weather patterns, from gentle drizzles to intense thunderstorms, create an immersive atmosphere.
+                    </p>
+                    <a href="#" class="mc-button mc-button-green">Discover</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Three Section -->
+        <section id="feature-three" class="py-24 relative bg-black text-white flex items-center min-h-[70vh] overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2">
+            <div class="feature-background" style="background-image: url('feature3.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10 text-center md:text-left">
+                <div class="max-w-2xl">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        DYNAMIC SPECIAL EFFECTS
+                    </h2>
+                    <p class="text-lg leading-relaxed font-normal mb-8">
+                        Butterflies, fireflies, and other custom visual effects add a magical touch to your Minecraft world.
+                    </p>
+                    <a href="#" class="mc-button mc-button-green">Explore</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Four Section -->
+        <section id="feature-four" class="py-24 relative bg-black text-white flex items-center min-h-[70vh] overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2">
+            <div class="feature-background" style="background-image: url('feature6.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10 text-center md:text-right">
+                <div class="max-w-2xl ml-auto">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        OPTIMIZED PERFORMANCE
+                    </h2>
+                    <p class="text-lg leading-relaxed font-normal mb-8">
+                        Enjoy a smooth, lag-free experience even with all these amazing features enabled.
+                    </p>
+                    <a href="#" class="mc-button mc-button-green">See Details</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Five Section -->
+        <section id="feature-five" class="py-24 relative bg-black text-white flex items-center min-h-[70vh] overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2">
+            <div class="feature-background" style="background-image: url('feature5.png');"></div>
+            <div class="feature-overlay"></div>
+            <div class="container max-w-6xl mx-auto px-5 relative z-10 text-center md:text-left">
+                <div class="max-w-2xl">
+                    <h2 class="font-minecraftia text-5xl leading-tight mb-6 tracking-wider">
+                        COMMUNITY INTEGRATION
+                    </h2>
+                    <p class="text-lg leading-relaxed font-normal mb-8">
+                        Seamlessly connect with our thriving community through in-game features and dedicated Discord channels.
+                    </p>
+                    <a href="#" class="mc-button mc-button-green">Join Community</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container max-w-6xl mx-auto px-5">
+            <div class="flex justify-between items-center flex-wrap gap-8 py-16">
+                <div class="flex gap-10 text-sm flex-wrap justify-center md:justify-start">
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Terms of Service</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Support</a>
+                    <a href="#" class="text-gray-400 no-underline transition-colors duration-300 uppercase tracking-tight hover:text-white">Contact</a>
+                </div>
+                <div class="text-xs text-gray-400 tracking-tight text-center md:text-right">
+                    2025 MC+ Golden Stickers. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Link to your custom JavaScript -->
+    <script src="script.js"></script>
+    <script>
+        // GSAP ScrollTrigger Animations for Feature Sections
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Function to apply parallax effect to a feature section
+            function setupFeatureParallax(sectionId, backgroundImageUrl) {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+
+                const backgroundDiv = section.querySelector('.feature-background');
+                if (!backgroundDiv) return;
+
+                // Ensure the background div uses the specified image
+                backgroundDiv.style.backgroundImage = `url('${backgroundImageUrl}')`;
+
+                gsap.to(backgroundDiv, {
+                    yPercent: 20, // Move the background 20% relative to its height
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top bottom", // Start when the top of the section hits the bottom of the viewport
+                        end: "bottom top",   // End when the bottom of the section leaves the top of the viewport
+                        scrub: true,         // Link animation directly to scroll position
+                    }
+                });
+            }
+
+            // Apply parallax to the main features hero section
+            setupFeatureParallax('features-hero', 'feature.png');
+
+            // Apply parallax to individual feature sections
+            setupFeatureParallax('feature-one', 'feature1.png');
+            setupFeatureParallax('feature-two', 'feature2.png');
+            setupFeatureParallax('feature-three', 'feature3.png');
+            setupFeatureParallax('feature-four', 'feature6.png');
+            setupFeatureParallax('feature-five', 'feature5.png');
+        });
+    </script>
+</body>
+</html>

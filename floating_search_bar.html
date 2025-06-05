@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Search Bar</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Space Mono' -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define the local 'Minecraftia' font if not already loaded by parent */
+        @font-face {
+            font-family: 'Minecraftia';
+            src: url('fonts/Minecraftia.ttf') format('truetype'); /* Adjust path if necessary */
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Custom font families for Tailwind-like application within this scope */
+        .font-minecraftia-local {
+            font-family: 'Minecraftia', cursive;
+        }
+        .font-space-mono-local {
+            font-family: 'Space Mono', monospace;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace; /* Default font for the bar itself */
+            background-color: transparent;
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none; /* Allow clicks to pass through body */
+        }
+        .search-container {
+            pointer-events: all; /* Re-enable clicks for the container */
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            
+            background-color: #1a1a1a; /* Darker background */
+            padding: 1rem;
+            border-radius: 0.5rem; /* Slightly less rounded for blocky feel */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 300px;
+            max-width: 90vw;
+            border: 2px solid #fff; /* White border for Minecraft feel */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            transition: transform 0.3s ease-in-out; /* For hover effect */
+        }
+
+        /* Pixelated border effect for the container */
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border: 2px dashed #4a4a4a; /* Pixelated dashed border */
+            border-radius: 0.6rem; /* Match container border-radius + offset */
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.3rem; /* Even less rounded */
+            border: 1px solid #666; /* Gray border */
+            background-color: #333; /* Darker input background */
+            color: #eee; /* Light text */
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        .search-input:focus {
+            border-color: #ff9900; /* Minecraft orange highlight */
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.5); /* Orange glow */
+        }
+        .search-button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.3rem;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkwAAAA7AQMAAADP2+S7AAAABlBMVEX///8AAABVwtN+AAAAAXRSTlMAQObYZgAAAFRJREFUeNpjYBgFo2AUjIJRMBpFAwMTjExgYGBiYiYGRgYgH2BgYGNgZGJkZgZ2BiYGAgYGGgZGBoYGZmZmBh8GBgZmRmYG+BhoGBgYGBhQMQwAw4A/1m2P78AAAAASUVORK5CYII='); /* Generic dark pixel texture */
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease-out, filter 0.1s ease-out;
+            border: 2px solid #555; /* Darker border for button */
+            box-shadow: 0 4px 0px #333; /* Pixelated shadow for depth */
+            font-family: 'Minecraftia', cursive; /* Minecraftia font for button text */
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        .search-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2); /* Slightly brighten texture on hover */
+            box-shadow: 0 6px 0px #222; /* Lifted shadow effect */
+        }
+        .search-results {
+            background-color: #333; /* Darker background for results */
+            color: #e2e8f0; /* Light text */
+            padding: 0.75rem;
+            border-radius: 0.3rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            border: 1px solid #666; /* Gray border for results box */
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="SEARCH...">
+        <button id="searchButton" class="search-button">SEARCH</button>
+        <div id="searchResults" class="search-results">
+            YOUR RESULTS HERE...
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchResultsDiv = document.getElementById('searchResults');
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // In a real application, you would send this query to a backend search API.
+                // For this example, we'll simulate a simple response based on the query.
+                let resultText = '';
+                switch(query.toLowerCase()) {
+                    case 'features':
+                        resultText = 'Discover our amazing features like Ambient Sounds and Enhanced Weather!';
+                        break;
+                    case 'pricing':
+                        resultText = 'Check out our Basic, Premium, and Pro pricing plans!';
+                        break;
+                    case 'discord':
+                        resultText = 'Join our Discord server for community updates!';
+                        break;
+                    case 'golden stickers':
+                        resultText = 'Welcome to Golden Stickers, the best Minecraft server!';
+                        break;
+                    case 'recrafted':
+                        resultText = 'Recrafted is our premium resource pack with HD textures and custom models!';
+                        break;
+                    default:
+                        resultText = `Searching for "${query}"... No exact match found.`;
+                }
+                searchResultsDiv.textContent = resultText;
+            } else {
+                searchResultsDiv.textContent = "PLEASE ENTER A SEARCH TERM.";
+            }
+        }
+    </script>
+</body>
+</html>
